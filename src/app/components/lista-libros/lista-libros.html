@@ -1,0 +1,45 @@
+<div class="lista-container">
+  <div style="background-color: #e9ecef; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
+  <h3>➕ Agregar Nuevo Libro (Prueba Two-Way Binding)</h3>
+  
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <input type="text" placeholder="Título" [(ngModel)]="nuevoLibro.titulo">
+    
+    <input type="text" placeholder="Autor" [(ngModel)]="nuevoLibro.autor">
+    
+    <input type="number" placeholder="Saga ID" [(ngModel)]="nuevoLibro.sagaId">
+    
+    <button (click)="agregarLibro()" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+      Agregar
+    </button>
+  </div>
+  
+  <p style="font-size: 0.8em; color: #666;">
+    Escribiendo: <strong>{{ nuevoLibro.titulo }}</strong> 
+    <span *ngIf="nuevoLibro.autor"> por {{ nuevoLibro.autor }}</span>
+  </p>
+</div>
+
+  <h2>📚 Catálogo de Libros</h2>
+
+  <div *ngIf="libros.length > 0; else noLibros">
+    
+    <div class="grid-libros">
+      <div *ngFor="let libro of libros" class="card-libro">
+        <h3>{{ libro.titulo }}</h3>
+        <span style="background:#eee; padding: 2px 6px; border-radius: 4px; font-size: 0.8em">
+          Saga: {{ libro.sagaId }}
+        </span>
+        <p><strong>Autor:</strong> {{ libro.autor }}</p>
+        <p><strong>Páginas:</strong> {{ libro.numeroPaginas }}</p>
+        <hr>
+        <p class="descripcion">{{ libro.descripcion }}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <ng-template #noLibros>
+    <p>No se encontraron libros en la biblioteca.</p>
+  </ng-template>
+</div>
