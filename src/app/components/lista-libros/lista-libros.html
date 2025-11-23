@@ -8,6 +8,8 @@
     <input type="text" placeholder="Autor" [(ngModel)]="nuevoLibro.autor">
     
     <input type="number" placeholder="Saga ID" [(ngModel)]="nuevoLibro.sagaId">
+
+    <input type="date" [(ngModel)]="nuevoLibro.fechaEdicion" title="Fecha de Edición">
     
     <button (click)="agregarLibro()" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer;">
       Agregar
