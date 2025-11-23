@@ -24,4 +24,16 @@ export class LibroService {
     // Omitimos 'id' porque el backend lo genera
     return this.http.post<Libro>(this.apiUrl, libro);
   }
+
+  // Método para borrar un libro (DELETE /libros/:id)
+  deleteLibro(id: number): Observable<void> {
+    // Construimos la URL específica: http://localhost:3000/libros/5
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  // Método para actualizar (PATCH /libros/:id)
+  updateLibro(id: number, libro: Partial<Libro>): Observable<Libro> {
+    // Enviamos solo los datos que cambiaron (o todos, el backend lo maneja)
+    return this.http.patch<Libro>(`${this.apiUrl}/${id}`, libro);
+  }
 }

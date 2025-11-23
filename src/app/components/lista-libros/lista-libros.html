@@ -1,47 +1,88 @@
 <div class="lista-container">
-  <div style="background-color: #e9ecef; padding: 15px; margin-bottom: 20px; border-radius: 8px;">
-  <h3>➕ Agregar Nuevo Libro (Prueba Two-Way Binding)</h3>
-  
-  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <input type="text" placeholder="Título" [(ngModel)]="nuevoLibro.titulo">
-    
-    <input type="text" placeholder="Autor" [(ngModel)]="nuevoLibro.autor">
-    
-    <input type="number" placeholder="Saga ID" [(ngModel)]="nuevoLibro.sagaId">
 
-    <input type="date" [(ngModel)]="nuevoLibro.fechaEdicion" title="Fecha de Edición">
+  <div class="form-container">
+    <h3>
+      {{ esEdicion ? '✏️ Editando Libro (ID: ' + nuevoLibro.id + ')' : '➕ Agregar Nuevo Libro' }}
+    </h3>
     
-    <button (click)="agregarLibro()" style="background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer;">
-      Agregar
-    </button>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Título</label>
+        <input type="text" placeholder="Ej: El Imperio Final" [(ngModel)]="nuevoLibro.titulo">
+      </div>
+      
+      <div class="form-group">
+        <label>Autor</label>
+        <input type="text" placeholder="Ej: Brandon Sanderson" [(ngModel)]="nuevoLibro.autor">
+      </div>
+
+      <div class="form-group small">
+        <label>Saga ID</label>
+        <input type="number" [(ngModel)]="nuevoLibro.sagaId">
+      </div>
+
+      <div class="form-group small">
+        <label>Páginas</label>
+        <input type="number" [(ngModel)]="nuevoLibro.numeroPaginas">
+      </div>
+
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" [(ngModel)]="nuevoLibro.fechaEdicion">
+      </div>
+
+      <div class="form-group full-width">
+        <label>Descripción</label>
+        <textarea placeholder="Breve descripción..." [(ngModel)]="nuevoLibro.descripcion" rows="2"></textarea>
+      </div>
+
+      <div class="form-actions full-width">
+        <button (click)="procesarFormulario()" 
+                class="btn"
+                [ngClass]="esEdicion ? 'btn-primary' : 'btn-success'">
+          {{ esEdicion ? 'Guardar Cambios' : 'Agregar Libro' }}
+        </button>
+
+        <button *ngIf="esEdicion" 
+                (click)="limpiarFormulario()" 
+                class="btn btn-secondary">
+          Cancelar
+        </button>
+      </div>
+    </div>
   </div>
-  
-  <p style="font-size: 0.8em; color: #666;">
-    Escribiendo: <strong>{{ nuevoLibro.titulo }}</strong> 
-    <span *ngIf="nuevoLibro.autor"> por {{ nuevoLibro.autor }}</span>
-  </p>
-</div>
+
+  <hr class="divider">
 
   <h2>📚 Catálogo de Libros</h2>
 
-  <div *ngIf="libros.length > 0; else noLibros">
-    
-    <div class="grid-libros">
-      <div *ngFor="let libro of libros" class="card-libro">
+  <div *ngIf="libros.length > 0; else noLibros" class="grid-libros">
+    <div *ngFor="let libro of libros" class="card-libro">
+      <div class="card-header">
         <h3>{{ libro.titulo }}</h3>
-        <span style="background:#eee; padding: 2px 6px; border-radius: 4px; font-size: 0.8em">
-          Saga: {{ libro.sagaId }}
-        </span>
+        <span class="badge">Saga: {{ libro.sagaId }}</span>
+      </div>
+      
+      <div class="card-body">
         <p><strong>Autor:</strong> {{ libro.autor }}</p>
         <p><strong>Páginas:</strong> {{ libro.numeroPaginas }}</p>
-        <hr>
+        <p><strong>Publicado:</strong> {{ libro.fechaEdicion }}</p>
         <p class="descripcion">{{ libro.descripcion }}</p>
       </div>
-    </div>
 
+      <div class="card-actions">
+        <button (click)="cargarDatosParaEditar(libro)" class="btn btn-warning btn-sm">
+          Editar
+        </button>
+        <button (click)="borrarLibro(libro.id)" class="btn btn-danger btn-sm">
+          Eliminar
+        </button>
+      </div>
+    </div>
   </div>
 
   <ng-template #noLibros>
-    <p>No se encontraron libros en la biblioteca.</p>
+    <p class="empty-msg">No se encontraron libros en la base de datos.</p>
   </ng-template>
+
 </div>
