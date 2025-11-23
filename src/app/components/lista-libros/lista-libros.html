@@ -37,14 +37,14 @@
       </div>
 
       <div class="form-actions full-width">
-        <button (click)="procesarFormulario()" 
+        <button (click)="procesarFormulario()"
                 class="btn"
                 [ngClass]="esEdicion ? 'btn-primary' : 'btn-success'">
           {{ esEdicion ? 'Guardar Cambios' : 'Agregar Libro' }}
         </button>
 
-        <button *ngIf="esEdicion" 
-                (click)="limpiarFormulario()" 
+        <button *ngIf="esEdicion"
+                (click)="limpiarFormulario()"
                 class="btn btn-secondary">
           Cancelar
         </button>
