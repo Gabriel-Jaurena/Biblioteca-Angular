@@ -1,6 +1,6 @@
 <div class="lista-container">
 
-  <div class="form-container" style="border-left: 5px solid #6f42c1;">
+  <div class="form-container" style="border-left: 5px solid #6f42c1; background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
     <h3 style="margin-top: 0; color: #6f42c1;">
       {{ esEdicion ? '✏️ Editando Saga' : '➕ Nueva Saga' }}
     </h3>
@@ -10,7 +10,7 @@
         <input type="text" placeholder="Nombre de la Saga" [(ngModel)]="nuevaSaga.nombre" style="flex: 2; padding: 8px;">
         <input type="text" placeholder="Era (Ej: Era 1)" [(ngModel)]="nuevaSaga.era" style="flex: 1; padding: 8px;">
       </div>
-
+      
       <div style="display: flex; gap: 10px;">
         <input type="date" [(ngModel)]="nuevaSaga.fechaInicio" style="padding: 8px;">
       </div>
@@ -18,53 +18,71 @@
       <textarea placeholder="Descripción..." [(ngModel)]="nuevaSaga.description" rows="2" style="padding: 8px; width: 100%; box-sizing: border-box;"></textarea>
 
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button (click)="procesarFormulario()" 
-                class="btn" 
+        <button (click)="procesarFormulario()" class="btn" 
                 [style.background-color]="esEdicion ? '#007bff' : '#6f42c1'"
                 style="color: white; padding: 8px 20px; border:none; border-radius: 4px; cursor: pointer;">
           {{ esEdicion ? 'Guardar Cambios' : 'Crear Saga' }}
         </button>
-        
-        <button *ngIf="esEdicion" (click)="limpiarFormulario()" style="padding: 8px 20px; cursor: pointer;">
-          Cancelar
-        </button>
+        <button *ngIf="esEdicion" (click)="limpiarFormulario()" style="padding: 8px 20px; cursor: pointer;">Cancelar</button>
       </div>
     </div>
   </div>
 
   <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
 
+  <div style="background: #e0cffc; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    <span style="font-weight: bold; color: #4a148c;">🔍 Filtrar:</span>
+    <input type="text" placeholder="Nombre Saga..." [(ngModel)]="filtroNombre" style="padding: 5px;">
+    <input type="text" placeholder="Título de Libro..." [(ngModel)]="filtroLibroTitulo" style="padding: 5px;">
+    
+    <button (click)="buscar()" style="padding: 5px 10px; cursor: pointer; background: #6f42c1; color: white; border: none; border-radius: 4px;">Buscar</button>
+    <button (click)="limpiarFiltros()" style="padding: 5px 10px; cursor: pointer;">Limpiar</button>
+
+    <div style="flex-grow: 1;"></div> 
+
+    <span style="font-weight: bold; color: #4a148c;">🔃 Orden:</span>
+    <select [(ngModel)]="criterioOrden" (change)="ordenarSagas()" style="padding: 5px;">
+      <option value="reciente">Más Recientes</option>
+      <option value="antiguo">Más Antiguas</option>
+      <option value="alfabetico">Alfabético</option>
+      <option value="era">Por Era</option>
+    </select>
+  </div>
+
   <h2>🌍 Sagas del Cosmere</h2>
 
-  <div *ngIf="sagas.length > 0; else noSagas" class="grid-libros">
-    <div *ngFor="let saga of sagas" class="card-libro" style="border-top: 4px solid #6f42c1;">
+  <div *ngIf="sagas.length > 0; else noSagas" class="grid-libros" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+    <div *ngFor="let saga of sagas" class="card-libro" style="border: 1px solid #ddd; border-radius: 8px; border-top: 4px solid #6f42c1; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
       
-      <div class="card-header" style="display: flex; justify-content: space-between;">
+      <div class="card-header" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
         <h3 style="margin: 0;">{{ saga.nombre }}</h3>
         <span style="background: #6f42c1; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">
           ID: {{ saga.id }}
         </span>
       </div>
       
-      <div class="card-body" style="padding: 10px;">
+      <div class="card-body" style="padding: 15px;">
         <p><strong>Era:</strong> {{ saga.era }}</p>
         <p><strong>Inicio:</strong> {{ saga.fechaInicio | date:'mediumDate' }}</p>
         <p style="font-style: italic; color: #666;">{{ saga.description }}</p>
         
         <div style="background: #f3f0ff; padding: 5px; border-radius: 4px; margin-top: 10px; font-size: 0.9em; color: #5f3dc4;">
-          📚 Libros en esta saga: <strong>{{ saga.libros ? saga.libros.length : 0 }}</strong>
+          📚 Libros en saga: <strong>{{ saga.libros ? saga.libros.length : 0 }}</strong>
         </div>
       </div>
 
-      <div class="card-actions" style="padding: 10px; display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid #eee;">
+      <div class="card-actions" style="padding: 10px 15px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;">
+        <a [routerLink]="['/sagas', saga.id]" style="background-color: #6f42c1; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 0.9em;">
+          Ver Libros
+        </a>
+        
         <button (click)="cargarDatosParaEditar(saga)" style="background-color: #ffc107; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Editar</button>
         <button (click)="borrarSaga(saga.id)" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Eliminar</button>
       </div>
-
     </div>
   </div>
 
   <ng-template #noSagas>
-    <p>No hay sagas registradas.</p>
+    <p style="text-align: center; margin-top: 30px; color: #666;">No hay sagas registradas.</p>
   </ng-template>
 </div>

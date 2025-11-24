@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { ListaLibrosComponent } from './components/lista-libros/lista-libros';
 import { DetalleLibroComponent } from './components/detalle-libro/detalle-libro'; // Importar
 import { ListaSagasComponent } from './components/lista-sagas/lista-sagas';
+import { DetalleSagaComponent } from './components/detalle-saga/detalle-saga';
 
 export const routes: Routes = [
   { path: 'libros', component: ListaLibrosComponent },
@@ -10,5 +11,6 @@ export const routes: Routes = [
   { path: 'libros/:id', component: DetalleLibroComponent },
 
   { path: 'sagas', component: ListaSagasComponent },
+  { path: 'sagas/:id', component: DetalleSagaComponent },
   { path: '', redirectTo: 'libros', pathMatch: 'full' }
 ];

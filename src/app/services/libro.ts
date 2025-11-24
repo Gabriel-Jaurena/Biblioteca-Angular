@@ -32,6 +32,10 @@ export class LibroService {
     return this.http.get<Libro>(`${this.apiUrl}/${id}`);
   }
 
+  getLibrosBySaga(sagaId: number): Observable<Libro[]> {
+    return this.http.get<Libro[]>(`${this.apiUrl}?sagaId=${sagaId}`);
+  }
+
   // ... (tus métodos create, delete, update siguen igual) ...
   createLibro(libro: Omit<Libro, 'id'>): Observable<Libro> {
     return this.http.post<Libro>(this.apiUrl, libro);

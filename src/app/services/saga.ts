@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Saga } from '../interfaces/saga';
 
@@ -12,8 +12,18 @@ export class SagaService {
 
   constructor(private http: HttpClient) { }
 
-  getSagas(): Observable<Saga[]> {
-    return this.http.get<Saga[]>(this.apiUrl);
+// Modificado para aceptar filtros
+  getSagas(nombre?: string, libroTitulo?: string): Observable<Saga[]> {
+    let params = new HttpParams();
+    if (nombre) params = params.set('nombre', nombre);
+    if (libroTitulo) params = params.set('libroTitulo', libroTitulo);
+
+    return this.http.get<Saga[]>(this.apiUrl, { params });
+  }
+  
+  // Nuevo: Obtener una saga individual por ID (para el detalle)
+  getSagaById(id: number): Observable<Saga> {
+    return this.http.get<Saga>(`${this.apiUrl}/${id}`);
   }
 
   createSaga(saga: Omit<Saga, 'id'>): Observable<Saga> {
