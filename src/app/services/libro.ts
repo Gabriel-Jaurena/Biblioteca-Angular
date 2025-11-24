@@ -1,39 +1,47 @@
-// src/app/services/libro.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http'; // <-- Importar HttpParams
 import { Observable } from 'rxjs';
-import { Libro } from '../interfaces/libro'; // Importamos tu interfaz
+import { Libro } from '../interfaces/libro';
 
 @Injectable({
-  providedIn: 'root' // Esto hace que el servicio esté disponible en toda la app
+  providedIn: 'root'
 })
 export class LibroService {
   
-  // La URL de tu API NestJS (backend)
   private apiUrl = 'http://localhost:3000/libros';
 
   constructor(private http: HttpClient) { }
 
-  // Método para obtener todos los libros (GET /libros)
-  getLibros(): Observable<Libro[]> {
-    return this.http.get<Libro[]>(this.apiUrl);
+  // 1. GET All + Filter (Combinados)
+  getLibros(titulo?: string, fechaEdicion?: number): Observable<Libro[]> {
+    let params = new HttpParams();
+
+    if (titulo) {
+      params = params.set('titulo', titulo);
+    }
+    if (fechaEdicion) {
+      params = params.set('fechaEdicion', fechaEdicion);
+    }
+
+    // Si hay params, la URL será: .../libros?titulo=X&fechaEdicion=Y
+    return this.http.get<Libro[]>(this.apiUrl, { params });
   }
 
-  // Método para crear un libro (POST /libros)
+  // 2. GET By ID
+  getLibroById(id: number): Observable<Libro> {
+    return this.http.get<Libro>(`${this.apiUrl}/${id}`);
+  }
+
+  // ... (tus métodos create, delete, update siguen igual) ...
   createLibro(libro: Omit<Libro, 'id'>): Observable<Libro> {
-    // Omitimos 'id' porque el backend lo genera
     return this.http.post<Libro>(this.apiUrl, libro);
   }
 
-  // Método para borrar un libro (DELETE /libros/:id)
   deleteLibro(id: number): Observable<void> {
-    // Construimos la URL específica: http://localhost:3000/libros/5
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Método para actualizar (PATCH /libros/:id)
   updateLibro(id: number, libro: Partial<Libro>): Observable<Libro> {
-    // Enviamos solo los datos que cambiaron (o todos, el backend lo maneja)
     return this.http.patch<Libro>(`${this.apiUrl}/${id}`, libro);
   }
 }

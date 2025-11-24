@@ -1,88 +1,99 @@
 <div class="lista-container">
 
-  <div class="form-container">
-    <h3>
+  <div class="form-container" style="background-color: #e9ecef; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+    <h3 style="margin-top: 0;">
       {{ esEdicion ? '✏️ Editando Libro (ID: ' + nuevoLibro.id + ')' : '➕ Agregar Nuevo Libro' }}
     </h3>
     
-    <div class="form-grid">
-      <div class="form-group">
-        <label>Título</label>
-        <input type="text" placeholder="Ej: El Imperio Final" [(ngModel)]="nuevoLibro.titulo">
-      </div>
+    <div style="display: flex; flex-direction: column; gap: 15px;">
       
-      <div class="form-group">
-        <label>Autor</label>
-        <input type="text" placeholder="Ej: Brandon Sanderson" [(ngModel)]="nuevoLibro.autor">
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="text" placeholder="Título" [(ngModel)]="nuevoLibro.titulo" style="flex: 2; padding: 8px;">
+        <input type="text" placeholder="Autor" [(ngModel)]="nuevoLibro.autor" style="flex: 1; padding: 8px;">
       </div>
 
-      <div class="form-group small">
-        <label>Saga ID</label>
-        <input type="number" [(ngModel)]="nuevoLibro.sagaId">
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <input type="number" placeholder="Saga ID" [(ngModel)]="nuevoLibro.sagaId" style="width: 100px; padding: 8px;">
+        <input type="number" placeholder="Páginas" [(ngModel)]="nuevoLibro.numeroPaginas" style="width: 100px; padding: 8px;">
+        <input type="date" [(ngModel)]="nuevoLibro.fechaEdicion" style="padding: 8px;">
       </div>
 
-      <div class="form-group small">
-        <label>Páginas</label>
-        <input type="number" [(ngModel)]="nuevoLibro.numeroPaginas">
-      </div>
+      <textarea placeholder="Descripción del libro..." [(ngModel)]="nuevoLibro.descripcion" rows="2" style="padding: 8px; width: 100%; box-sizing: border-box;"></textarea>
 
-      <div class="form-group">
-        <label>Fecha</label>
-        <input type="date" [(ngModel)]="nuevoLibro.fechaEdicion">
-      </div>
-
-      <div class="form-group full-width">
-        <label>Descripción</label>
-        <textarea placeholder="Breve descripción..." [(ngModel)]="nuevoLibro.descripcion" rows="2"></textarea>
-      </div>
-
-      <div class="form-actions full-width">
-        <button (click)="procesarFormulario()"
-                class="btn"
-                [ngClass]="esEdicion ? 'btn-primary' : 'btn-success'">
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button (click)="procesarFormulario()" 
+                [style.background-color]="esEdicion ? '#007bff' : '#28a745'"
+                style="color: white; border: none; padding: 8px 20px; cursor: pointer; border-radius: 4px; font-weight: bold;">
           {{ esEdicion ? 'Guardar Cambios' : 'Agregar Libro' }}
         </button>
 
-        <button *ngIf="esEdicion"
-                (click)="limpiarFormulario()"
-                class="btn btn-secondary">
+        <button *ngIf="esEdicion" 
+                (click)="limpiarFormulario()" 
+                style="background-color: #6c757d; color: white; border: none; padding: 8px 20px; cursor: pointer; border-radius: 4px;">
           Cancelar
         </button>
       </div>
     </div>
   </div>
 
-  <hr class="divider">
+  <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+  <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+    
+    <span style="font-weight: bold;">🔍 Filtrar:</span>
+    <input type="text" placeholder="Buscar por título..." [(ngModel)]="filtroTitulo" style="padding: 5px;">
+    <input type="number" placeholder="Año" [(ngModel)]="filtroAnio" style="width: 80px; padding: 5px;">
+    
+    <button (click)="buscar()" style="padding: 5px 10px; cursor: pointer;">Buscar</button>
+    <button (click)="limpiarFiltros()" style="padding: 5px 10px; cursor: pointer;">Limpiar</button>
+
+    <div style="flex-grow: 1;"></div> 
+
+    <span style="font-weight: bold;">🔃 Ordenar por:</span>
+    <select [(ngModel)]="criterioOrden" (change)="ordenarLibros()" style="padding: 5px; border-radius: 4px;">
+      <option value="reciente">Más Recientes (ID)</option>
+      <option value="antiguo">Más Antiguos (ID)</option>
+      <option value="alfabetico">Alfabético (A-Z)</option>
+      <option value="anio">Año de Publicación</option>
+    </select>
+
+  </div>
 
   <h2>📚 Catálogo de Libros</h2>
 
-  <div *ngIf="libros.length > 0; else noLibros" class="grid-libros">
-    <div *ngFor="let libro of libros" class="card-libro">
-      <div class="card-header">
-        <h3>{{ libro.titulo }}</h3>
-        <span class="badge">Saga: {{ libro.sagaId }}</span>
+  <div *ngIf="libros.length > 0; else noLibros" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+    
+    <div *ngFor="let libro of libros" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <h3 style="margin-top: 0;">{{ libro.titulo }}</h3>
+        <span style="background:#343a40; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75em;">
+          Saga: {{ libro.sagaId }}
+        </span>
       </div>
       
-      <div class="card-body">
-        <p><strong>Autor:</strong> {{ libro.autor }}</p>
-        <p><strong>Páginas:</strong> {{ libro.numeroPaginas }}</p>
-        <p><strong>Publicado:</strong> {{ libro.fechaEdicion }}</p>
-        <p class="descripcion">{{ libro.descripcion }}</p>
-      </div>
+      <p style="margin: 5px 0;"><strong>Autor:</strong> {{ libro.autor }}</p>
+      <p style="margin: 5px 0;"><strong>Páginas:</strong> {{ libro.numeroPaginas }}</p>
+      <p style="margin: 5px 0;"><strong>Publicado:</strong> {{ libro.fechaEdicion }}</p>
+      <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+      <p style="color: #666; font-size: 0.9em; font-style: italic;">{{ libro.descripcion }}</p>
 
-      <div class="card-actions">
-        <button (click)="cargarDatosParaEditar(libro)" class="btn btn-warning btn-sm">
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+        <a [routerLink]="['/libros', libro.id]" style="background-color: #17a2b8; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 0.9em;">
+          Ver
+        </a>
+        <button (click)="cargarDatosParaEditar(libro)" style="background-color: #ffc107; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
           Editar
         </button>
-        <button (click)="borrarLibro(libro.id)" class="btn btn-danger btn-sm">
+        <button (click)="borrarLibro(libro.id)" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
           Eliminar
         </button>
       </div>
     </div>
+
   </div>
 
   <ng-template #noLibros>
-    <p class="empty-msg">No se encontraron libros en la base de datos.</p>
+    <p style="text-align: center; color: #666; margin-top: 30px;">No se encontraron libros.</p>
   </ng-template>
 
 </div>
