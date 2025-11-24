@@ -1,88 +1,123 @@
-<div class="lista-container">
+<div class="container fade-in">
 
-  <div class="form-container" style="border-left: 5px solid #6f42c1; background-color: #f8f9fa; padding: 20px; border-radius: 8px;">
-    <h3 style="margin-top: 0; color: #6f42c1;">
-      {{ esEdicion ? '✏️ Editando Saga' : '➕ Nueva Saga' }}
-    </h3>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header text-white" [ngClass]="esEdicion ? 'bg-primary' : 'bg-indigo'" style="background-color: #6610f2;">
+      <h5 class="mb-0">
+        <i class="bi" [ngClass]="esEdicion ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+        {{ esEdicion ? ' Editando Saga' : ' Nueva Saga' }}
+      </h5>
+    </div>
     
-    <div style="display: flex; flex-direction: column; gap: 15px;">
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <input type="text" placeholder="Nombre de la Saga" [(ngModel)]="nuevaSaga.nombre" style="flex: 2; padding: 8px;">
-        <input type="text" placeholder="Era (Ej: Era 1)" [(ngModel)]="nuevaSaga.era" style="flex: 1; padding: 8px;">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Nombre de la Saga</label>
+          <input type="text" class="form-control" placeholder="Ej: Nacidos de la Bruma" [(ngModel)]="nuevaSaga.nombre">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Era</label>
+          <input type="text" class="form-control" placeholder="Ej: Era 1" [(ngModel)]="nuevaSaga.era">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Fecha Inicio</label>
+          <input type="date" class="form-control" [(ngModel)]="nuevaSaga.fechaInicio">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-control" rows="2" [(ngModel)]="nuevaSaga.description"></textarea>
+        </div>
       </div>
-      
-      <div style="display: flex; gap: 10px;">
-        <input type="date" [(ngModel)]="nuevaSaga.fechaInicio" style="padding: 8px;">
-      </div>
+    </div>
 
-      <textarea placeholder="Descripción..." [(ngModel)]="nuevaSaga.description" rows="2" style="padding: 8px; width: 100%; box-sizing: border-box;"></textarea>
+    <div class="card-footer text-end">
+      <button *ngIf="esEdicion" (click)="limpiarFormulario()" class="btn btn-secondary me-2">Cancelar</button>
+      <button (click)="procesarFormulario()" class="btn" [ngClass]="esEdicion ? 'btn-primary' : 'btn-success'">
+        <i class="bi bi-save"></i> {{ esEdicion ? 'Guardar Cambios' : 'Crear Saga' }}
+      </button>
+    </div>
+  </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button (click)="procesarFormulario()" class="btn" 
-                [style.background-color]="esEdicion ? '#007bff' : '#6f42c1'"
-                style="color: white; padding: 8px 20px; border:none; border-radius: 4px; cursor: pointer;">
-          {{ esEdicion ? 'Guardar Cambios' : 'Crear Saga' }}
-        </button>
-        <button *ngIf="esEdicion" (click)="limpiarFormulario()" style="padding: 8px 20px; cursor: pointer;">Cancelar</button>
+  <div class="card mb-4 border-0 bg-light">
+    <div class="card-body">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label fw-bold small text-muted">Filtrar por Nombre</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" placeholder="Nombre..." [(ngModel)]="filtroNombre" (keyup.enter)="buscar()">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold small text-muted">Filtrar por Libro</label>
+          <input type="text" class="form-control" placeholder="Título de libro..." [(ngModel)]="filtroLibroTitulo" (keyup.enter)="buscar()">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-bold small text-muted">Orden</label>
+          <select class="form-select" [(ngModel)]="criterioOrden" (change)="ordenarSagas()">
+            <option value="reciente">Más Recientes</option>
+            <option value="antiguo">Más Antiguas</option>
+            <option value="alfabetico">Alfabético (A-Z)</option>
+            <option value="era">Por Era</option>
+          </select>
+        </div>
+        <div class="col-md-2 d-grid gap-2">
+          <button (click)="buscar()" class="btn btn-outline-primary">Buscar</button>
+          <button (click)="limpiarFiltros()" class="btn btn-link text-decoration-none btn-sm text-muted">Limpiar</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <hr style="margin: 30px 0; border: 0; border-top: 1px solid #eee;">
+  <h2 class="mb-4 border-bottom pb-2 text-indigo" style="color: #6610f2;">
+    <i class="bi bi-globe"></i> Sagas del Cosmere
+  </h2>
 
-  <div style="background: #e0cffc; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-    <span style="font-weight: bold; color: #4a148c;">🔍 Filtrar:</span>
-    <input type="text" placeholder="Nombre Saga..." [(ngModel)]="filtroNombre" style="padding: 5px;">
-    <input type="text" placeholder="Título de Libro..." [(ngModel)]="filtroLibroTitulo" style="padding: 5px;">
-    
-    <button (click)="buscar()" style="padding: 5px 10px; cursor: pointer; background: #6f42c1; color: white; border: none; border-radius: 4px;">Buscar</button>
-    <button (click)="limpiarFiltros()" style="padding: 5px 10px; cursor: pointer;">Limpiar</button>
-
-    <div style="flex-grow: 1;"></div> 
-
-    <span style="font-weight: bold; color: #4a148c;">🔃 Orden:</span>
-    <select [(ngModel)]="criterioOrden" (change)="ordenarSagas()" style="padding: 5px;">
-      <option value="reciente">Más Recientes</option>
-      <option value="antiguo">Más Antiguas</option>
-      <option value="alfabetico">Alfabético</option>
-      <option value="era">Por Era</option>
-    </select>
-  </div>
-
-  <h2>🌍 Sagas del Cosmere</h2>
-
-  <div *ngIf="sagas.length > 0; else noSagas" class="grid-libros" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
-    <div *ngFor="let saga of sagas" class="card-libro" style="border: 1px solid #ddd; border-radius: 8px; border-top: 4px solid #6f42c1; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-      
-      <div class="card-header" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0;">{{ saga.nombre }}</h3>
-        <span style="background: #6f42c1; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8em;">
-          ID: {{ saga.id }}
-        </span>
-      </div>
-      
-      <div class="card-body" style="padding: 15px;">
-        <p><strong>Era:</strong> {{ saga.era }}</p>
-        <p><strong>Inicio:</strong> {{ saga.fechaInicio | date:'mediumDate' }}</p>
-        <p style="font-style: italic; color: #666;">{{ saga.description }}</p>
-        
-        <div style="background: #f3f0ff; padding: 5px; border-radius: 4px; margin-top: 10px; font-size: 0.9em; color: #5f3dc4;">
-          📚 Libros en saga: <strong>{{ saga.libros ? saga.libros.length : 0 }}</strong>
+  <div *ngIf="sagas.length > 0; else noSagas" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+    <div class="col" *ngFor="let saga of sagas">
+      <div class="card h-100 shadow-sm hover-card border-top-indigo">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+          <h5 class="card-title mb-0 text-truncate" title="{{saga.nombre}}">{{ saga.nombre }}</h5>
+          <span class="badge bg-secondary">ID: {{ saga.id }}</span>
         </div>
-      </div>
-
-      <div class="card-actions" style="padding: 10px 15px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 10px;">
-        <a [routerLink]="['/sagas', saga.id]" style="background-color: #6f42c1; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 0.9em;">
-          Ver Libros
-        </a>
         
-        <button (click)="cargarDatosParaEditar(saga)" style="background-color: #ffc107; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Editar</button>
-        <button (click)="borrarSaga(saga.id)" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Eliminar</button>
+        <div class="card-body">
+          <div class="d-flex justify-content-between mb-3">
+            <span class="badge bg-light text-dark border">
+              <i class="bi bi-hourglass-split"></i> {{ saga.era || 'N/A' }}
+            </span>
+            <small class="text-muted">{{ saga.fechaInicio | date:'mediumDate' }}</small>
+          </div>
+          
+          <p class="card-text text-secondary small">{{ saga.description }}</p>
+          
+          <div class="alert alert-light border d-flex align-items-center p-2 mb-0">
+            <i class="bi bi-book-half me-2 text-primary"></i>
+            <span class="small">Contiene <strong>{{ saga.libros?.length || 0 }}</strong> libros</span>
+          </div>
+        </div>
+
+        <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
+          <a [routerLink]="['/sagas', saga.id]" class="btn btn-primary btn-sm">
+            <i class="bi bi-eye"></i> Ver Libros
+          </a>
+          <div>
+            <button (click)="cargarDatosParaEditar(saga)" class="btn btn-outline-warning btn-sm me-1">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button (click)="borrarSaga(saga.id)" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <ng-template #noSagas>
-    <p style="text-align: center; margin-top: 30px; color: #666;">No hay sagas registradas.</p>
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+      <p>No se encontraron sagas registradas.</p>
+    </div>
   </ng-template>
+
 </div>

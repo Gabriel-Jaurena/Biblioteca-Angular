@@ -17,12 +17,12 @@ export class ListaSagasComponent implements OnInit {
   sagas: Saga[] = [];
   esEdicion: boolean = false;
 
-  // Filtros
+  // Filtros y Ordenamiento
   filtroNombre: string = '';
   filtroLibroTitulo: string = '';
-  criterioOrden: string = 'reciente';
+  criterioOrden: string = 'reciente'; // <--- Nueva variable
 
-  // Formulario
+  // Modelo Formulario
   nuevaSaga: Saga = { id: 0, nombre: '', description: '', fechaInicio: '', era: '' };
 
   constructor(private sagaService: SagaService) {}
@@ -32,11 +32,10 @@ export class ListaSagasComponent implements OnInit {
   }
 
   cargarSagas() {
-    // Llamamos al servicio con los parámetros de filtro
     this.sagaService.getSagas(this.filtroNombre, this.filtroLibroTitulo).subscribe({
       next: (datos) => {
         this.sagas = datos;
-        this.ordenarSagas(); // Ordenamos siempre que llegan datos
+        this.ordenarSagas(); // <--- Ordenar al cargar
       },
       error: (err) => console.error(err)
     });
@@ -52,6 +51,7 @@ export class ListaSagasComponent implements OnInit {
     this.cargarSagas();
   }
 
+  // --- LÓGICA DE ORDENAMIENTO ---
   ordenarSagas() {
     switch (this.criterioOrden) {
       case 'reciente':
@@ -64,6 +64,7 @@ export class ListaSagasComponent implements OnInit {
         this.sagas.sort((a, b) => a.nombre.localeCompare(b.nombre));
         break;
       case 'era':
+        // Ordenar por Era alfabéticamente
         this.sagas.sort((a, b) => (a.era || '').localeCompare(b.era || ''));
         break;
     }
@@ -84,8 +85,8 @@ export class ListaSagasComponent implements OnInit {
       next: (sagaCreada) => {
         this.sagas = [...this.sagas, sagaCreada];
         this.limpiarFormulario();
-        this.ordenarSagas();
-        alert('Saga creada');
+        this.ordenarSagas(); // Reordenar al agregar
+        alert('Saga creada con éxito');
       },
       error: () => alert('Error al crear')
     });
@@ -97,27 +98,28 @@ export class ListaSagasComponent implements OnInit {
       next: (actualizada) => {
         this.sagas = this.sagas.map(s => s.id === id ? actualizada : s);
         this.limpiarFormulario();
-        this.ordenarSagas();
+        this.ordenarSagas(); // Reordenar al actualizar
+        alert('Saga actualizada');
       },
       error: () => alert('Error al actualizar')
     });
   }
-
+  
   borrarSaga(id: number) {
-    if(!confirm('¿Borrar esta saga?')) return;
-    this.sagaService.deleteSaga(id).subscribe({
-        next: () => this.sagas = this.sagas.filter(s => s.id !== id),
-        error: () => alert('Error al borrar')
-    })
+      if(!confirm('¿Borrar esta saga?')) return;
+      this.sagaService.deleteSaga(id).subscribe({
+          next: () => this.sagas = this.sagas.filter(s => s.id !== id),
+          error: (e) => alert('Error al borrar')
+      })
   }
-
+  
   cargarDatosParaEditar(saga: Saga) {
-    this.esEdicion = true;
-    this.nuevaSaga = { ...saga, fechaInicio: saga.fechaInicio ? saga.fechaInicio.split('T')[0] : '' };
+      this.esEdicion = true;
+      this.nuevaSaga = { ...saga, fechaInicio: saga.fechaInicio ? saga.fechaInicio.split('T')[0] : '' };
   }
-
+  
   limpiarFormulario() {
-    this.esEdicion = false;
-    this.nuevaSaga = { id: 0, nombre: '', description: '', fechaInicio: '', era: '' };
+      this.esEdicion = false;
+      this.nuevaSaga = { id: 0, nombre: '', description: '', fechaInicio: '', era: '' };
   }
 }

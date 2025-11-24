@@ -1,99 +1,122 @@
-<div class="lista-container">
+<div class="container fade-in">
 
-  <div class="form-container" style="background-color: #e9ecef; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-    <h3 style="margin-top: 0;">
-      {{ esEdicion ? '✏️ Editando Libro (ID: ' + nuevoLibro.id + ')' : '➕ Agregar Nuevo Libro' }}
-    </h3>
-    
-    <div style="display: flex; flex-direction: column; gap: 15px;">
-      
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <input type="text" placeholder="Título" [(ngModel)]="nuevoLibro.titulo" style="flex: 2; padding: 8px;">
-        <input type="text" placeholder="Autor" [(ngModel)]="nuevoLibro.autor" style="flex: 1; padding: 8px;">
+  <div class="card shadow-sm mb-4">
+    <div class="card-header text-white" [ngClass]="esEdicion ? 'bg-primary' : 'bg-success'">
+      <h5 class="mb-0">
+        <i class="bi" [ngClass]="esEdicion ? 'bi-pencil-square' : 'bi-plus-circle'"></i>
+        {{ esEdicion ? ' Editando Libro (ID: ' + nuevoLibro.id + ')' : ' Agregar Nuevo Libro' }}
+      </h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-8">
+          <label class="form-label">Título</label>
+          <input type="text" class="form-control" placeholder="Ej: El Imperio Final" [(ngModel)]="nuevoLibro.titulo">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Autor</label>
+          <input type="text" class="form-control" placeholder="Ej: Brandon Sanderson" [(ngModel)]="nuevoLibro.autor">
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Saga ID</label>
+          <input type="number" class="form-control" [(ngModel)]="nuevoLibro.sagaId">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Páginas</label>
+          <input type="number" class="form-control" [(ngModel)]="nuevoLibro.numeroPaginas">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Fecha de Publicación</label>
+          <input type="date" class="form-control" [(ngModel)]="nuevoLibro.fechaEdicion">
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Descripción</label>
+          <textarea class="form-control" rows="2" [(ngModel)]="nuevoLibro.descripcion"></textarea>
+        </div>
       </div>
-
-      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <input type="number" placeholder="Saga ID" [(ngModel)]="nuevoLibro.sagaId" style="width: 100px; padding: 8px;">
-        <input type="number" placeholder="Páginas" [(ngModel)]="nuevoLibro.numeroPaginas" style="width: 100px; padding: 8px;">
-        <input type="date" [(ngModel)]="nuevoLibro.fechaEdicion" style="padding: 8px;">
-      </div>
-
-      <textarea placeholder="Descripción del libro..." [(ngModel)]="nuevoLibro.descripcion" rows="2" style="padding: 8px; width: 100%; box-sizing: border-box;"></textarea>
-
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button (click)="procesarFormulario()" 
-                [style.background-color]="esEdicion ? '#007bff' : '#28a745'"
-                style="color: white; border: none; padding: 8px 20px; cursor: pointer; border-radius: 4px; font-weight: bold;">
-          {{ esEdicion ? 'Guardar Cambios' : 'Agregar Libro' }}
-        </button>
-
-        <button *ngIf="esEdicion" 
-                (click)="limpiarFormulario()" 
-                style="background-color: #6c757d; color: white; border: none; padding: 8px 20px; cursor: pointer; border-radius: 4px;">
-          Cancelar
-        </button>
-      </div>
+    </div>
+    <div class="card-footer text-end">
+      <button *ngIf="esEdicion" (click)="limpiarFormulario()" class="btn btn-secondary me-2">
+        Cancelar
+      </button>
+      <button (click)="procesarFormulario()" class="btn" [ngClass]="esEdicion ? 'btn-primary' : 'btn-success'">
+        <i class="bi bi-save"></i> {{ esEdicion ? 'Guardar Cambios' : 'Agregar Libro' }}
+      </button>
     </div>
   </div>
 
-  <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
-
-  <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-    
-    <span style="font-weight: bold;">🔍 Filtrar:</span>
-    <input type="text" placeholder="Buscar por título..." [(ngModel)]="filtroTitulo" style="padding: 5px;">
-    <input type="number" placeholder="Año" [(ngModel)]="filtroAnio" style="width: 80px; padding: 5px;">
-    
-    <button (click)="buscar()" style="padding: 5px 10px; cursor: pointer;">Buscar</button>
-    <button (click)="limpiarFiltros()" style="padding: 5px 10px; cursor: pointer;">Limpiar</button>
-
-    <div style="flex-grow: 1;"></div> 
-
-    <span style="font-weight: bold;">🔃 Ordenar por:</span>
-    <select [(ngModel)]="criterioOrden" (change)="ordenarLibros()" style="padding: 5px; border-radius: 4px;">
-      <option value="reciente">Más Recientes (ID)</option>
-      <option value="antiguo">Más Antiguos (ID)</option>
-      <option value="alfabetico">Alfabético (A-Z)</option>
-      <option value="anio">Año de Publicación</option>
-    </select>
-
+  <div class="row mb-4 align-items-end bg-light p-3 rounded border">
+    <div class="col-md-4">
+      <label class="form-label fw-bold">🔍 Filtrar por Título</label>
+      <input type="text" class="form-control" [(ngModel)]="filtroTitulo" (keyup.enter)="buscar()">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label fw-bold">Año</label>
+      <input type="number" class="form-control" [(ngModel)]="filtroAnio">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label fw-bold">Ordenar por</label>
+      <select class="form-select" [(ngModel)]="criterioOrden" (change)="ordenarLibros()">
+        <option value="reciente">Más Recientes</option>
+        <option value="antiguo">Más Antiguos</option>
+        <option value="alfabetico">A-Z</option>
+        <option value="anio">Año</option>
+      </select>
+    </div>
+    <div class="col-md-3 d-grid gap-2 d-md-flex justify-content-md-end">
+      <button (click)="buscar()" class="btn btn-primary me-md-2"><i class="bi bi-search"></i></button>
+      <button (click)="limpiarFiltros()" class="btn btn-outline-secondary"><i class="bi bi-x-lg"></i></button>
+    </div>
   </div>
 
-  <h2>📚 Catálogo de Libros</h2>
+  <h2 class="mb-4 border-bottom pb-2">📚 Catálogo de Libros</h2>
 
-  <div *ngIf="libros.length > 0; else noLibros" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+  <div *ngIf="libros.length > 0; else noLibros" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     
-    <div *ngFor="let libro of libros" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-        <h3 style="margin-top: 0;">{{ libro.titulo }}</h3>
-        <span style="background:#343a40; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.75em;">
-          Saga: {{ libro.sagaId }}
-        </span>
-      </div>
-      
-      <p style="margin: 5px 0;"><strong>Autor:</strong> {{ libro.autor }}</p>
-      <p style="margin: 5px 0;"><strong>Páginas:</strong> {{ libro.numeroPaginas }}</p>
-      <p style="margin: 5px 0;"><strong>Publicado:</strong> {{ libro.fechaEdicion }}</p>
-      <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-      <p style="color: #666; font-size: 0.9em; font-style: italic;">{{ libro.descripcion }}</p>
-
-      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-        <a [routerLink]="['/libros', libro.id]" style="background-color: #17a2b8; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-size: 0.9em;">
-          Ver
-        </a>
-        <button (click)="cargarDatosParaEditar(libro)" style="background-color: #ffc107; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-          Editar
-        </button>
-        <button (click)="borrarLibro(libro.id)" style="background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
-          Eliminar
-        </button>
+    <div class="col" *ngFor="let libro of libros">
+      <div class="card h-100 shadow-sm hover-shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0 text-truncate" title="{{libro.titulo}}">{{ libro.titulo }}</h5>
+          <span class="badge bg-dark">Saga: {{ libro.sagaId }}</span>
+        </div>
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">{{ libro.autor }}</h6>
+          <p class="card-text small text-secondary">{{ libro.descripcion }}</p>
+          
+          <ul class="list-group list-group-flush small">
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Páginas:</span> <strong>{{ libro.numeroPaginas }}</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Publicado:</span> <strong>{{ libro.fechaEdicion | date:'yyyy' }}</strong>
+            </li>
+          </ul>
+        </div>
+        <div class="card-footer bg-white border-top-0 d-flex justify-content-between">
+          <a [routerLink]="['/libros', libro.id]" class="btn btn-outline-info btn-sm">
+            <i class="bi bi-eye"></i> Ver
+          </a>
+          <div>
+            <button (click)="cargarDatosParaEditar(libro)" class="btn btn-outline-warning btn-sm me-1">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button (click)="borrarLibro(libro.id)" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
 
   <ng-template #noLibros>
-    <p style="text-align: center; color: #666; margin-top: 30px;">No se encontraron libros.</p>
+    <div class="alert alert-warning text-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      No se encontraron libros en la base de datos.
+    </div>
   </ng-template>
 
 </div>
