@@ -8,14 +8,15 @@ import { SagaService } from '../../services/saga';
   selector: 'app-lista-sagas',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './lista-sagas.html', // Ajusta si tu archivo tiene otro nombre
+  templateUrl: './lista-sagas.html',
   styleUrl: './lista-sagas.css'
 })
 export class ListaSagasComponent implements OnInit {
 
   sagas: Saga[] = [];
+  esEdicion: boolean = false;
 
-  // Modelo para el formulario
+  // Modelo del formulario
   nuevaSaga: Saga = {
     id: 0,
     nombre: '',
@@ -32,49 +33,65 @@ export class ListaSagasComponent implements OnInit {
 
   cargarSagas() {
     this.sagaService.getSagas().subscribe({
-      next: (datos) => {
-        this.sagas = datos;
-      },
-      error: (err) => console.error('Error al cargar sagas:', err)
+      next: (datos) => this.sagas = datos,
+      error: (err) => console.error(err)
     });
   }
 
-  agregarSaga() {
-    // Parche simple para la fecha si está vacía (opcional)
-    if (!this.nuevaSaga.fechaInicio) {
-       // Podrías asignar hoy o dejarlo vacío si el backend lo permite
-       // this.nuevaSaga.fechaInicio = new Date().toISOString().split('T')[0];
+  procesarFormulario() {
+    if (this.esEdicion) {
+      this.actualizarSaga();
+    } else {
+      this.agregarSaga();
     }
+  }
 
+  agregarSaga() {
     this.sagaService.createSaga(this.nuevaSaga).subscribe({
       next: (sagaCreada) => {
+        // Inmutabilidad para que Angular detecte el cambio
         this.sagas = [...this.sagas, sagaCreada];
-        
-        // Limpiar formulario
-        this.nuevaSaga = {
-          id: 0,
-          nombre: '',
-          description: '',
-          fechaInicio: '',
-          era: ''
-        };
-        console.log('Saga creada');
+        this.limpiarFormulario();
+        alert('Saga creada con éxito');
       },
-      error: (err) => {
-        console.error(err);
-        alert('Error al crear la saga.');
-      }
+      error: (err) => alert('Error al crear saga')
+    });
+  }
+
+  actualizarSaga() {
+    const id = this.nuevaSaga.id;
+    this.sagaService.updateSaga(id, this.nuevaSaga).subscribe({
+      next: (sagaActualizada) => {
+        this.sagas = this.sagas.map(s => s.id === id ? sagaActualizada : s);
+        this.limpiarFormulario();
+        alert('Saga actualizada');
+      },
+      error: (err) => alert('Error al actualizar')
     });
   }
 
   borrarSaga(id: number) {
-    if(!confirm('¿Borrar esta saga? Se borrarán también sus libros.')) return;
-    
+    if(!confirm('¿Borrar esta saga? ATENCIÓN: Se borrarán todos los libros asociados.')) return;
+
     this.sagaService.deleteSaga(id).subscribe({
       next: () => {
         this.sagas = this.sagas.filter(s => s.id !== id);
       },
-      error: (err) => alert('Error al borrar saga')
+      error: (err) => alert('Error al borrar. Quizás tiene libros y la BD no permite cascada.')
     });
+  }
+
+  cargarDatosParaEditar(saga: Saga) {
+    this.esEdicion = true;
+    this.nuevaSaga = { 
+      ...saga,
+      // Recorte de fecha para el input date
+      fechaInicio: saga.fechaInicio ? saga.fechaInicio.toString().split('T')[0] : ''
+    };
+  }
+
+  limpiarFormulario() {
+    this.esEdicion = false;
+    this.nuevaSaga = { id: 0, nombre: '', description: '', fechaInicio: '', era: '' };
   }
 }

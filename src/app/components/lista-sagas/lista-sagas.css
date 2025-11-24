@@ -118,3 +118,8 @@ input, textarea {
   justify-content: flex-end;
   gap: 10px;
 }
+
+/* Reutiliza el CSS de lista-libros */
+.lista-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+.grid-libros { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.card-libro { border: 1px solid #dee2e6; border-radius: 8px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; }
