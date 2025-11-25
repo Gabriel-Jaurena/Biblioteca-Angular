@@ -1,17 +1,16 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-// Importa el componente (verifica que la ruta del import sea correcta según tu estructura)
 import { ListaLibrosComponent } from './components/lista-libros/lista-libros';
-import { ListaSagasComponent } from './components/lista-sagas/lista-sagas'; // <-- Importar
+import { DetalleLibroComponent } from './components/detalle-libro/detalle-libro'; // Importar
+import { ListaSagasComponent } from './components/lista-sagas/lista-sagas';
+import { DetalleSagaComponent } from './components/detalle-saga/detalle-saga';
 
 export const routes: Routes = [
-  // 1. Ruta explícita para ver la lista
   { path: 'libros', component: ListaLibrosComponent },
+  
+  // NUEVA RUTA PARA DETALLE
+  { path: 'libros/:id', component: DetalleLibroComponent },
 
-  // Nueva ruta para Sagas
   { path: 'sagas', component: ListaSagasComponent },
-
-  // 2. Ruta por defecto (Redirección):
-  // Si la URL está vacía (''), redirige automáticamente a 'libros'
+  { path: 'sagas/:id', component: DetalleSagaComponent },
   { path: '', redirectTo: 'libros', pathMatch: 'full' }
 ];
