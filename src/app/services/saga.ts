@@ -8,7 +8,7 @@ import { Saga } from '../interfaces/saga';
 })
 export class SagaService {
   
-  private apiUrl = 'http://localhost:3000/sagas';
+  private apiUrl = 'https://biblioteca-sanderson.onrender.com/sagas';
 
   constructor(private http: HttpClient) { }
 

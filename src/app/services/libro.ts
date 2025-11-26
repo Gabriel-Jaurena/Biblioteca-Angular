@@ -8,7 +8,7 @@ import { Libro } from '../interfaces/libro';
 })
 export class LibroService {
   
-  private apiUrl = 'http://localhost:3000/libros';
+  private apiUrl = 'https://biblioteca-sanderson.onrender.com/libros';
 
   constructor(private http: HttpClient) { }
 
