@@ -111,7 +111,7 @@ export class ListaLibrosComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Error al crear. Verifica el Saga ID.');
+        alert('Error al crear el libro.');
       }
     });
   }
