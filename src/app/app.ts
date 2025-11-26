@@ -7,7 +7,7 @@ import { RouterOutlet, RouterLink } from '@angular/router';
   selector: 'app-root',
   standalone: true, // Esto confirma que es Standalone
   // 2. Añadimos RouterLink a la lista de imports
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
