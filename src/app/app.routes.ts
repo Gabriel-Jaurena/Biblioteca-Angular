@@ -12,5 +12,5 @@ export const routes: Routes = [
 
   { path: 'sagas', component: ListaSagasComponent },
   { path: 'sagas/:id', component: DetalleSagaComponent },
-  { path: '', redirectTo: 'libros', pathMatch: 'full' }
+  { path: '', component: ListaSagasComponent }
 ];
